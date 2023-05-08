@@ -1,0 +1,3 @@
+bison --yacc -dv parser.y
+flex token.l
+g++ y.tab.c lex.yy.c

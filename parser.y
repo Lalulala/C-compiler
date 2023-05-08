@@ -3,18 +3,19 @@
 #include<string>
 #include<iostream>
 #include<vector>
-AST::Program * Root;
-extern int yylex(void);
+
+int yylex(void);
 void yyerror(char *s){
     std::printf("Error: %s\n", s);
     std::exit(1); 
 }
+AST::Program * Root;
 %}
 %union{
     int inum;
     double dnum;
     char cval;
-    string * str;
+    std:: string * str;
     AST::Program * program;
      AST::Stmt * stmt;
      AST::Decl * decl;
@@ -150,13 +151,13 @@ Arg: Vartype ID {$$= new AST::Arg($1,$2);}
 Vardecl: Vartype Varlist SEMI {$$ = new AST::Vardecl ($1,$2);}
                 ;
 
-Vartype: INT   {$$ = new AST::Vartype(_Int);}
-          |CHAR {$$ = new AST::Vartype(_Char);}
-          |FLOAT {$$ = new AST::Vartype(_Float);}
-          |DOUBLE {$$ = new AST::Vartype(_Double);}
-          |SHORT {$$ = new AST::Vartype(_Short);}
-          |LONG {$$ = new AST::Vartype(_Long);}
-          |VOID {$$ = new AST::Vartype(_Void);}
+Vartype: INT   {$$ = new AST::Vartype(AST::Vartype::Types::_Int);}
+          |CHAR {$$ = new AST::Vartype(AST::Vartype::Types::_Char);}
+          |FLOAT {$$ = new AST::Vartype(AST::Vartype::Types::_Float);}
+          |DOUBLE {$$ = new AST::Vartype(AST::Vartype::Types::_Double);}
+          |SHORT {$$ = new AST::Vartype(AST::Vartype::Types::_Short);}
+          |LONG {$$ = new AST::Vartype(AST::Vartype::Types::_Long);}
+          |VOID {$$ = new AST::Vartype(AST::Vartype::Types::_Void);}
           ;
 
 /*Varlist : Varlist COMMA Var   {$$ = $1 ; $$->push_back($3);}
@@ -208,7 +209,7 @@ Expression : ID   {$$= $1;}
               |Expression GT Expression     {$$=new AST::Gt($1,$3) ;}
               |Expression LT Expression     {$$=new AST::Lt($1,$3) ;}
               |Expression NE Expression      {$$=new AST::Ne($1,$3) ;}
-              |Expression ASSIGN Expression   {$$=new AST::Assign($1,$3) ;}
+              |Expression ASSIGN Expression   {$$=new AST::AssignNode($1,$3) ;}
               |SAND Expression   {$$=new AST::Getaddess($2);}
               |NOT Expression  {$$=new AST::Not($2);}
                 ;

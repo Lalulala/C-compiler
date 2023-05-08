@@ -1,9 +1,10 @@
 %{
+#include "AST.h"
 #include "y.tab.h"
 #include <stdio.h>
 #include <iostream>
 #include <string>
-void yyerror(char *);
+extern "C" int yywrap() {return 1;}
  
 %}
 INUM [1-9]+[0-9]*|0

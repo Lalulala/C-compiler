@@ -7,7 +7,7 @@
 #include<string>
 #include <vector>
 //#include <llvm/Value.h>
-using namespace std;
+
 
 class CodeGenContext;
 namespace AST{
@@ -151,7 +151,8 @@ public:
         _Int,
         _Float,
         _Double,
-        _Void
+        _Void,
+        _Char
      };
     Types type;
     Vartype(Types type): type(type){}
@@ -414,8 +415,8 @@ public:
 
 class Id: public Expression{
 public :
-    string *name;
-    Id(string *name){}
+    std::string *name;
+    Id(std::string *name){}
     //llvm::Value* codeGen(CodeGenContext& context);
 };
 
@@ -441,8 +442,8 @@ public:
 
 class StrNode: public Value{
 public:
-    string *value;
-    StrNode(string *value){}
+    std::string *value;
+    StrNode(std::string *value){}
     //llvm::Value* codeGen(CodeGenContext& context);
 };
 

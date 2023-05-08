@@ -275,7 +275,4 @@ ReturnStmt: RETURN Expression SEMI {$$ = new AST::ReturnStmt($2);}
 int yywrap(){
     return 1;
 }
-int main()
-{
-    yyparse();
-}
+

@@ -5,7 +5,22 @@
 #include <iostream>
 #include <string>
 extern "C" int yywrap() {return 1;}
- 
+ char Escape2Char(char ch){
+	switch(ch){
+	case 'b': return '\b';
+	case 'n': return '\n';
+	case 'r': return '\r';
+	case 't': return '\t';
+	case '\\': return '\\';
+	case '\'': return '\'';
+	case '\"': return '\"';
+	default:
+		if ('0'<=ch && ch<='9')
+			return (char)(ch-'0');
+		else
+			return ch;
+	}
+}
 %}
 INUM [1-9]+[0-9]*|0
 DNUM [0-9]+"."[0-9]*
@@ -59,8 +74,17 @@ DNUM [0-9]+"."[0-9]*
 [ \t\n]													
 "/*"[^*]*[*]+([^*/][^*]*[*]+)*"/"						
 "//".*	
+\'"\\."\'                                  {yylval.cVal = Escape2Char(yytext[2]);return CHARACTER; }
 \'[^\\']\'                                 {yylval.cval = yytext[1]; return CHARACTER;  }
-\"(\\.|[^\\"])*\"                          {yylval.str= new std:: string(yytext,yyleng); return STRING;}
+\"(\\.|[^\\"])*\"                          {yylval.str= new std:: string(""); 
+                                            for (int i = 1; i <= yyleng-2; i++)
+											if (yytext[i] == '\\'){
+												i++;
+												yylval.strVal->push_back(Escape2Char(yytext[i]));
+											}else{
+												yylval.strVal->push_back(yytext[i]);
+											    }
+											 return STRING;}
 
 [a-zA-Z_][a-zA-Z0-9_]*	                   {yylval.str= new std:: string(yytext,yyleng); return Identifier;}
 {INUM}                                     {sscanf(yytext,"%d",&yylval.inum); return INTERGER;}

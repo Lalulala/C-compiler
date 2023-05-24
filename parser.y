@@ -36,7 +36,6 @@ AST::Program * Root;
     AST::BreakStmt *  breakStmt;
     AST::ContinueStmt* continueStmt;
     AST::Expression * expression;
-    AST::Id * id;
     AST::Value * value;
     AST::Var_id * var_id;
     AST::Var_array * var_array;
@@ -58,7 +57,7 @@ AST::Program * Root;
         
 %token <inum> INTERGER
 %token <dnum> REAL
-%token <str> STRING Identifier
+%token <str> STRING ID
 %token <cval> CHARACTER
 %type<program> Program 
 %type<stmts> Stmts
@@ -66,7 +65,6 @@ AST::Program * Root;
 %type<decl> Decl
 %type<fundecl> Fundecl
 %type<vartype>   Vartype
-%type<id>        ID
 %type<argList>   FunArg_list
 %type<arg>       Arg
 %type<vardecl>  Vardecl
@@ -168,18 +166,11 @@ Vartype: INT   {$$ = new AST::Vartype(AST::Vartype::Types::_Int);}
           |VOID {$$ = new AST::Vartype(AST::Vartype::Types::_Void);}
           ;
 
-/*Varlist : Varlist COMMA Var   {$$ = $1 ; $$->push_back($3);}
-           | Var  {$$ = new VarList(); $$->push_back($1);}
-           ;
-
-Var: ID {$$ = new Var($1);} 
-     | ID ASSIGN Expression {$$ = new Var($1,$3);} 
-     ;*/
 
 
 //变量列表 
-Varlist : Varlist COMMA Var {$$ = $1 ; $$->push_back($3);}
-        | Var {$$ = new AST::VarList(); $$->push_back($1);}
+Varlist : Varlist COMMA Var_id {$$ = $1 ; $$->push_back($3);}
+        | Var_id {$$ = new AST::VarList(); $$->push_back($1);}
         ;
 
 //变量 分为数组和普通的变量
@@ -209,7 +200,7 @@ Exp :Expression {$$=$1;}
       ;
 
 //表达式
-Expression : ID   {$$= $1;} 
+Expression : ID   {$$= new AST::Id($1);} 
               |VALUE {$$= $1;} 
               |ID LPAREN Call_arglist RPAREN {$$ = new AST::Func_call($1,$3);}
               |LPAREN Expression RPAREN  {$$=$2;}
@@ -231,9 +222,6 @@ Expression : ID   {$$= $1;}
               |NOT Expression  {$$=new AST::Not($2);}
                 ;
 
-//ID，变量名字
-ID : Identifier {$$= new AST::Id($1);}
-     ;
 
 //变量的值
 VALUE: INTERGER  {$$ = new AST::IntNode($1);}

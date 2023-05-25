@@ -219,6 +219,7 @@ class ConditionStmt : public Stmt {
   llvm::Value* CodeGen(Codegen& __Generator);
 };
 
+/*
 class LoopStmt : public Stmt {
  public:
   //条件表达式
@@ -227,29 +228,46 @@ class LoopStmt : public Stmt {
   Stmt* Loopbody;
   //llvm::Value* codeGen(CodeGenContext& context);
   llvm::Value* CodeGen(Codegen& __Generator);
-};
+};*/
 
-class WhileStmt : public LoopStmt {
+class WhileStmt : public Stmt {
  public:
+  //条件表达式
+  Expression* C_Expression;
+  //循环体
+  Stmt* Loopbody;
   WhileStmt(Expression* C_Expression, Stmt* Loopbody) {}
   ~WhileStmt() {}
   //llvm::Value* codeGen(CodeGenContext& context);
+  llvm::Value* CodeGen(Codegen& __Generator);
 };
 
-class DoStmt : public LoopStmt {
+class DoStmt : public Stmt {
  public:
+  //条件表达式
+  Expression* C_Expression;
+  //循环体
+  Stmt* Loopbody;
   DoStmt(Expression* C_Expression, Stmt* Loopbody) {}
   ~DoStmt() {}
   //llvm::Value* codeGen(CodeGenContext& context);
+  llvm::Value* CodeGen(Codegen& __Generator);
 };
 
-class ForStmt : public LoopStmt {
+class ForStmt : public Stmt {
  public:
+  //条件表达式
+  Expression* C_Expression;
+  //循环体
+  Stmt* Loopbody;
+
   Stmt* Init;
   Expression* then;
-  ForStmt(Stmt* Init, Expression* C_Expression, Expression* then, Stmt* Loopbody) : Init(Init), then(then) {}
+  ForStmt(Stmt* Init, Expression* C_Expression, Expression* then, Stmt* Loopbody)
+      : Init(Init), C_Expression(C_Expression), then(then), Loopbody(Loopbody) {}
   ~ForStmt() {}
   //llvm::Value* codeGen(CodeGenContext& context);
+  llvm::Value* CodeGen(Codegen& __Generator);
 };
 
 class SwitchStmt : public Stmt {

@@ -77,7 +77,6 @@ AST::Program * Root;
 %type<valueList> Init
 %type<value> VALUE
 %type<block> Block
-%type<loopStmt>                                                 LoopStmt
 %type<conditionStmt>	 				 	ConditionStmt
 %type<forStmt>							ForStmt
 %type<whileStmt>						WhileStmt
@@ -86,8 +85,8 @@ AST::Program * Root;
 %type<breakStmt>						BreakStmt
 %type<continueStmt>						ContinueStmt
 %type<returnStmt>						ReturnStmt
-%type<casel>                                                     Case
-%type<caseList>                                                 CaseStmt 
+%type<casel>                     Case
+%type<caseList>                  CaseStmt 
 
 
 
@@ -118,7 +117,9 @@ Stmts: Stmts Stmt  {$$=$1; $$->push_back($2);}
 //stmt 分为 Decl ,一些常用的stmt,和exp,也就是表达式
 Stmt: Decl                       {$$=$1;}
       | ConditionStmt              {$$=$1;}          
-      | LoopStmt              {$$=$1;}
+      |ForStmt {$$=$1;}
+      |WhileStmt  {$$=$1;}
+      |DoStmt {$$=$1;}
       | Exp SEMI              {$$=$1;}
       | Block              {$$=$1;}
       | SwitchStmt              {$$=$1;}
@@ -242,11 +243,6 @@ ConditionStmt : IF LPAREN Expression RPAREN Stmt {$$ = new AST::ConditionStmt($3
                 ;
 
 //循环语句 for while dowhile
-LoopStmt: ForStmt {$$=$1;}
-           |WhileStmt  {$$=$1;}
-           |DoStmt {$$=$1;}
-           ;
-
 
 WhileStmt:WHILE LPAREN Expression RPAREN Stmt  {$$ = new AST::WhileStmt($3,$5);}
             ;
